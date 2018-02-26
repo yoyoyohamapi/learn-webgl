@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>学习 WebGL</title>
+  </head>
+  <body onload="main()">
+    <canvas id="canvas" width="400" height="400"></canvas>
+    <script id="vertex-shader" type="notjs">
+      attribute vec4 a_position;
+      uniform mat4 u_matrix;
+      void main() {
+        gl_Position = u_matrix * a_position;
+      }
+    </script>
+    <script id="fragment-shader" type="notjs">
+      precision mediump float;
+      uniform vec4 u_color; 
+      void main() {
+        gl_FragColor = u_color;
+      }
+    </script>
+    <script src="./lib/utils.js"></script>
+    <script src="Matrix.js"></script>
+  </body>
+</html>

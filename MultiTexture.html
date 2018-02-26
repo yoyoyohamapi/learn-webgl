@@ -1,0 +1,33 @@
+<!DOCTYPE>
+<html>
+  <head>
+    <meta charset="utf8" />
+    <title>学习 WebGL</title>
+  </head>
+  <body onload="main()">
+    <canvas width="400" height="400"></canvas>
+    <script id="vertex-shader" type="notjs">
+      attribute vec4 a_position;
+      attribute vec2 a_texcoord;
+      varying vec2 v_texcoord;
+      void main() {
+        gl_Position = a_position;
+        v_texcoord = a_texcoord;
+      }
+    </script>
+    <script id="fragment-shader" type="notjs">
+      precision mediump float;
+      varying vec2 v_texcoord;
+      uniform sampler2D u_sampler0;
+      uniform sampler2D u_sampler1;
+      void main() {
+        vec4 color0 = texture2D(u_sampler0, v_texcoord);
+        vec4 color1 = texture2D(u_sampler1, v_texcoord);
+        gl_FragColor = color0 * color1;
+      }
+    </script>
+    <script src="./lib/utils.js"></script>
+    <script src="./lib/cuon-matrix.js"></script>
+    <script src="MultiTexture.js"></script>
+  </body>
+</html>
