@@ -1,9 +1,2 @@
-root = true
-
-[*]
-charset = utf-8
-indent_style = space
-indent_size = 2
-end_of_line = lf
-insert_final_newline = true
-trim_trailing_whitespace = true
+# WebGL 编程指南
+原书：http://www.informit.com/store/webgl-programming-guide-interactive-3d-graphics-programming-9780321902924
