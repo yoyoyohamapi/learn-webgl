@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8" />
+    <title>学习 WebGL</title>
+  </head>
+  <body onload="main()">
+    <canvas width="400" height="400"></canvas>
+    <script id="vertex-shader" type="notjs">
+      attribute vec4 a_position;
+      attribute vec4 a_color;
+      attribute vec4 a_normal;
+      uniform mat4 u_matrix; // 变换矩阵
+      uniform mat4 u_normalMatrix; // 法向量矩阵
+      uniform vec3 u_lightColor; // 光线颜色
+      uniform vec3 u_lightDirection; // 光线方向
+      uniform vec3 u_ambientColor; // 环境光颜色
+      varying vec4 v_color;
+      void main() {
+        gl_Position = u_matrix * a_position;
+        // 归一化法向量
+        vec4 normal = u_normalMatrix * a_normal;
+        // 计算法向量和光线方向的点积
+        float cosTheta = max(dot(u_lightDirection, normalize(normal.xyz)), 0.0);
+        // 计算反射光颜色
+        vec3 diffuse = u_lightColor * a_color.rgb * cosTheta;
+        // 计算环境光产生的颜色
+        vec3 ambient = u_ambientColor * a_color.rgb;
+        v_color = vec4(diffuse + ambient, 1.0);
+      }
+    </script>
+    <script id="fragment-shader" type="notjs">
+      precision mediump float;
+      varying vec4 v_color;
+      void main() {
+        gl_FragColor = v_color;
+      }
+    </script>
+    <script src="./lib/utils.js"></script>
+    <script src="./lib/cuon-matrix.js"></script>
+    <script src="LightTranslatedRotatedCube.js"></script>
+  </body>
+</html>
