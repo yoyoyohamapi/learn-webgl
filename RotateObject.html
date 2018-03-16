@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8" />
+    <title>学习 WebGL</title>
+  </head>
+  <body onload="main()">
+    <canvas width="500" height="500"></canvas>
+    <script id="vertex-shader" type="notjs">
+      attribute vec4 a_position;
+      attribute vec4 a_normal;
+      uniform mat4 u_mvpMatrix;
+      uniform mat4 u_normalMatrix;
+      varying vec4 v_color;
+      void main() {
+        gl_Position = u_mvpMatrix * a_position;
+        vec3 normal = normalize((u_normalMatrix * a_normal).xyz);
+        vec4 color = vec4(1.0, 0.0, 0.0, 1.0);
+        vec3 lightColor = vec3(1.0);
+        vec3 ambientColor = vec3(0.2);
+        vec3 lightDirection = normalize(vec3(0.0, 0.5, 0.7));
+        // 计算法向量与光线的夹角
+        float cosTheta = max(dot(normal, lightDirection), 0.0);
+        // 计算反射光
+        vec3 diffuse = lightColor * color.rgb * cosTheta; 
+        // 计算环境光
+        vec3 ambient = ambientColor * color.rgb;
+        v_color = vec4(diffuse + ambient, 1.0);
+      }
+    </script>
+    <script id="fragment-shader" type="notjs">
+      precision mediump float;
+      varying vec4 v_color;
+      void main() {
+        gl_FragColor = v_color;
+      }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.5.6/Rx.min.js"></script>
+    <script src="./lib/utils.js"></script>
+    <script src="./lib/cuon-matrix.js"></script>
+    <script src="RotateObject.js"></script>
+  </body>
+</html>
