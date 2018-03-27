@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8" />
+    <title>雾化</title>
+  </head>
+  <body onload="main()">
+    <canvas width="400" height="400"></canvas>
+    <script id="vertex-shader" type="notjs">
+      attribute vec4 a_position;
+      attribute vec4 a_color;
+      uniform mat4 u_mvpMatrix;
+      uniform mat4 u_modelMatrix;
+      uniform vec4 u_eye;
+      varying vec4 v_color;
+      varying float v_dist; // 各个顶点与视点的距离
+      void main() {
+        gl_Position = u_mvpMatrix * a_position;
+        v_color = a_color;
+        v_dist = distance(u_modelMatrix * a_position, u_eye);
+      }
+    </script>
+    <script id="fragment-shader" type="notjs">
+      precision mediump float;
+      uniform vec3 u_fogColor; // 雾的颜色
+      uniform vec2 u_fogDist; // 雾化的起点和终点
+      varying vec4 v_color;
+      varying float v_dist;
+      void main() {
+        // <雾化因子> = (<终点> - <当前点与视点间的距离>) / (<终点> - <起点>)
+        float fogFactor = clamp((u_fogDist.y - v_dist) / (u_fogDist.y - u_fogDist.x), 0.0, 1.0);
+        // 用户看到的颜色
+        vec3 color = mix(u_fogColor, vec3(v_color), fogFactor);
+        gl_FragColor = vec4(color, 1.0);
+      }
+    </script>
+    <script src="./lib/utils.js"></script>
+    <script src="./lib/cuon-matrix.js"></script>
+    <script src="FOG.js"></script>
+  </body>
+</html>

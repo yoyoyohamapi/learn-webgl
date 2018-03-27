@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8" />
+    <title>圆形的点</title>
+  </head>
+  <body onload="main()">
+    <canvas width="400" height="400"></canvas>
+    <script id="vertex-shader" type="notjs">
+      attribute vec4 a_position;
+      void main() {
+        gl_Position = a_position;
+        gl_PointSize = 10.0;
+      }
+    </script>
+    <script id="fragment-shader" type="notjs">
+      precision mediump float;
+      void main() {
+        float dist = distance(gl_PointCoord, vec2(0.5, 0.5));
+        if (dist < 0.5) {
+          gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        } else {
+          discard;
+        }
+      }
+    </script>
+    <script src="./lib/utils.js"></script>
+    <script src="./lib/cuon-matrix.js"></script>
+    <script src="RoundedPoint.js"></script>
+  </body>
+</html>
