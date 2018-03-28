@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8" />
+    <title>Program Object</title>
+  </head>
+  <body onload="main()">
+  <canvas width="400" height="400"></canvas>
+    <script id="vertex-shader-normal" type="notjs">
+      attribute vec4 a_position;
+      attribute vec4 a_color;
+      uniform mat4 u_mvpMatrix;
+      uniform mat4 u_normalMatrix;
+      varying vec4 v_color;
+      void main() {
+        gl_Position = u_mvpMatrix * a_position;
+        vec3 lightDirection = vec3(0.0, 0.0, 1.0);
+        vec4 color = vec4(0.0, 1.0, 1.0, 1.0);
+        vec3 normal = normalize((u_normalMatrix * a_position ).xyz);
+        float cosTheta = max(dot(normal, lightDirection), 0.0);
+        v_color = vec4(color.rgb * cosTheta, color.a);
+      }
+    </script>
+    <script id="fragment-shader-normal" type="notjs">
+      precision mediump float;
+      varying vec4 v_color;
+      void main() {
+        gl_FragColor = v_color;
+      }
+    </script>
+    <script id="vertex-shader-texcoord" type="notjs">
+        attribute vec4 a_position;
+        attribute vec2 a_texcoord;
+        uniform mat4 u_mvpMatrix;
+        uniform mat4 u_normalMatrix;
+        varying float v_cosTheta;
+        varying vec2 v_texcoord;
+        void main() {
+          gl_Position = u_mvpMatrix * a_position;
+          vec3 lightDirection = vec3(0.0, 0.0, 1.0);
+          vec3 normal = normalize((u_normalMatrix * a_position ).xyz);
+          v_cosTheta = max(dot(normal, lightDirection), 0.0);
+          v_texcoord = a_texcoord;
+        }
+      </script>
+      <script id="fragment-shader-texcoord" type="notjs">
+        precision mediump float;
+        varying float v_cosTheta;
+        varying vec2 v_texcoord;
+        uniform sampler2D u_sampler;
+        void main() {
+          vec4 color = texture2D(u_sampler, v_texcoord);
+          gl_FragColor = vec4(color.rgb * v_cosTheta, color.a);
+        }
+      </script>
+    <script src="./lib/utils.js"></script>
+    <script src="./lib/cuon-matrix.js"></script>
+    <script src="ProgramObject.js"></script>
+  </body>
+</html>
