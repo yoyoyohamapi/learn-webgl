@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8" />
+    <title>Shadow</title>
+  </head>
+  <body onload="main()">
+    <canvas width="400" height="400"></canvas>
+    <script id="vertex-shader-shadow" type="notjs">
+      attribute vec4 a_position;
+      uniform mat4 u_mvpMatrix;
+      void main() {
+        gl_Position = u_mvpMatrix * a_position;
+      }
+    </script>
+    <script id="fragment-shader-shadow" type="notjs">
+      precision mediump float;
+      void main() {
+        // 第一个着色器将算出从光源看过去的顶点的深度信息，交给绘制着色器使用
+        // 这个着色器将使用帧缓冲区
+        gl_FragColor = vec4(gl_FragCoord.z, 0.0, 0.0, 0.0);
+      }
+    </script>
+    <script id="vertex-shader" type="notjs">
+      attribute vec4 a_position;
+      attribute vec4 a_color;
+      uniform mat4 u_mvpMatrix;
+      uniform mat4 u_mvpMatrixFromLight;
+      // 光源坐标系的坐标
+      varying vec4 v_positionFromLight;
+      varying vec4 v_color;
+      void main() { 
+        gl_Position = u_mvpMatrix * a_position;
+        v_positionFromLight = u_mvpMatrixFromLight * a_position;
+        v_color = a_color;
+      }
+    </script>
+    <script id="fragment-shader" type="notjs">
+      precision mediump float;
+      uniform sampler2D u_sampler;
+      varying vec4 v_positionFromLight;
+      varying vec4 v_color;
+      void main() {
+        // 计算阴影坐标
+        vec3 shadowCoord = (v_positionFromLight.xyz / v_positionFromLight.w) / 2.0 + 0.5;
+        // 获得纹素
+        vec4 rgbaDepth = texture2D(u_sampler, shadowCoord.xy);
+        // 提取纹素的深度信息，深度信息被我们保存在了第一个通道中
+        float depth = rgbaDepth.r;
+        float visibility = (shadowCoord.z > depth + 0.005) ? 0.7 : 1.0;
+        gl_FragColor = vec4(v_color.rgb * visibility, v_color.a);
+      }
+    </script>
+    <script src="./lib/utils.js"></script>
+    <script src="./lib/cuon-matrix.js"></script>
+    <script src="Shadow.js"></script>
+  </body>
+</html>
